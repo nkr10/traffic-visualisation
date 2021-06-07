@@ -5,7 +5,8 @@ import {HexagonLayer} from '@deck.gl/aggregation-layers';
 import {AmbientLight, PointLight, LightingEffect} from '@deck.gl/core';
 import {MapboxLayer} from '@deck.gl/mapbox';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZWpsMjQiLCJhIjoiY2twam15eTIyMDRnMjJ2cGJpcDMydW5maCJ9.IO0Yzvqazsbc86dlBv4B4g';
+//mapboxgl.accessToken = 'pk.eyJ1IjoiZWpsMjQiLCJhIjoiY2twam15eTIyMDRnMjJ2cGJpcDMydW5maCJ9.IO0Yzvqazsbc86dlBv4B4g';
+mapboxgl.accessToken = 'pk.eyJ1IjoibmtyMTAiLCJhIjoiY2tvdHFzcGtqMDVlNzJwcGl5dGxud241cyJ9.4Js3QvmYAkJyvsoGZCUP8A';
 
 // source: Natural Earth http://www.naturalearthdata.com/ via geojson.xyz
 const data = '2012-2019.json';
@@ -21,16 +22,25 @@ const INITIAL_VIEW_STATE = {
 };
 
 export const colorRange = [
-  [1, 152, 189],
-  [73, 227, 206],
-  [216, 254, 181],
-  [254, 237, 177],
-  [254, 173, 84],
-  [209, 55, 78]
+  //[1, 152, 189],
+  //[73, 227, 206],
+  //[216, 254, 181],
+  //[254, 237, 177],
+  //[254, 173, 84],
+  //[209, 55, 78]
+
+  [255, 255, 178],
+  [254, 217, 118],
+  [254, 178, 76],
+  [253, 141, 60],
+  [240, 59, 32],
+  [189, 0, 38]
+
 ];
 
 //const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json';
-const MAP_STYLE = 'mapbox://styles/mapbox/light-v9';
+//const MAP_STYLE = 'mapbox://styles/mapbox/light-v9';
+const MAP_STYLE = 'mapbox://styles/nkr10/ckpn8p2l608tl17ogxyzgclv4';
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -108,13 +118,15 @@ var deck = new Deck({
   ]
 });
 
-map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.dragPan.enable();
+map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+//map.addControl(new mapboxgl.NavigationControl());
+//map.dragPan.enable();
+//map.dragRotate.enable();
 //map.touchPitch.enable();
 
 map.on('load', () => {
   map.addLayer(new MapboxLayer({id:'3d-heatmap', deck}));
-
+  
   var button2012 = document.getElementById("2012").addEventListener("click", () => {
     deck.setProps({
       layers: [
@@ -137,6 +149,9 @@ map.on('load', () => {
           data: data,
           opacity: 0.8,
           filled: true,
+          //filled: false,
+          //radiusMinPixels: 5,
+          //radiusMaxPixels: 5,
           radiusMinPixels: 5,
           radiusMaxPixels: 5,
           getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
@@ -161,7 +176,9 @@ map.on('load', () => {
                   el.style.opacity = 0.0;
               }
           }
-      })
+      }),
+
+
 
       ],
     });
