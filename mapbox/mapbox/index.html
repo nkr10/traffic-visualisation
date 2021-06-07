@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <title>deck.gl example</title>
+    <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      margin:0;
+      padding:0;
+      overflow:hidden;
+    }
+    #container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #container > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #years {
+      position: absolute;
+    }
+
+    #tooltip {
+      position: absolute; 
+      background: white;
+      margin: 10px; padding: 10px;
+
+      
+    }
+    </style>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.0/mapbox-gl.css' rel='stylesheet' />
+  </head>
+  <body>
+    <div id="container">
+      <div id="map">
+        <canvas id="deck-canvas"></canvas>
+        <div id="years">
+          <input type="button" id="2012" value="2012">
+          <input type="button" id="2013" value="2013">
+          <input type="button" id="2014" value="2014">
+          <input type="button" id="2015" value="2015">
+          <input type="button" id="2016" value="2016">
+          <input type="button" id="2017" value="2017">
+          <input type="button" id="2018" value="2018">
+          <input type="button" id="2019" value="2019">
+      </div>
+      <div id="tooltip"></div>
+      </div>
+    </div>
+    <script src='app.js'></script>
+  </body>
+</html>
