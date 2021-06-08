@@ -68,6 +68,23 @@
       width: 10px;
     }
 
+    .button {
+      padding: 5px 15px;
+      margin: 5px;
+    }
+
+    .selected {
+      background-color:aquamarine;
+    }
+
+    #years {
+      background: beige;
+      padding: 4px;
+      border-radius: 5px;
+      border: black 2px solid;
+      margin: 10px 30px;
+    }
+
     </style>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.0/mapbox-gl.css' rel='stylesheet' />
   </head>
@@ -76,14 +93,14 @@
       <div id="map">
         <canvas id="deck-canvas"></canvas>
         <div id="years">
-          <input type="button" id="2012" value="2012">
-          <input type="button" id="2013" value="2013">
-          <input type="button" id="2014" value="2014">
-          <input type="button" id="2015" value="2015">
-          <input type="button" id="2016" value="2016">
-          <input type="button" id="2017" value="2017">
-          <input type="button" id="2018" value="2018">
-          <input type="button" id="2019" value="2019">
+          <input type="button" class="button" id="2012" value="2012">
+          <input type="button" class="button" id="2013" value="2013">
+          <input type="button" class="button" id="2014" value="2014">
+          <input type="button" class="button" id="2015" value="2015">
+          <input type="button" class="button" id="2016" value="2016">
+          <input type="button" class="button" id="2017" value="2017">
+          <input type="button" class="button" id="2018" value="2018">
+          <input type="button" class="button" id="2019" value="2019">
       </div>
 
       <div id="state-legend" class="legend">

@@ -134,6 +134,14 @@ map.on('load', () => {
   map.addLayer(new MapboxLayer({id:'3d-heatmap', deck}));
 
   var button2012 = document.getElementById("2012").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2012").classList.add("selected");
+
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -186,6 +194,13 @@ map.on('load', () => {
   })
 
   var button2013 = document.getElementById("2013").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2013").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -239,6 +254,13 @@ map.on('load', () => {
   })
 
   var button2014 = document.getElementById("2014").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2014").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -292,6 +314,13 @@ map.on('load', () => {
   })
 
   var button2015 = document.getElementById("2015").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2015").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -344,6 +373,13 @@ map.on('load', () => {
   })
 
   var button2016 = document.getElementById("2016").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2016").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -399,6 +435,14 @@ map.on('load', () => {
   })
 
   var button2017 = document.getElementById("2017").addEventListener("click", () => {
+    
+    var x = document.getElementsByClassName("button");
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2017").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -450,6 +494,15 @@ map.on('load', () => {
   })
 
   var button2018 = document.getElementById("2018").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+
+    
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2018").classList.add("selected");
     deck.setProps({
       layers: [
         new HexagonLayer({
@@ -500,6 +553,15 @@ map.on('load', () => {
   })
 
   var button2019 = document.getElementById("2019").addEventListener("click", () => {
+    var x = document.getElementsByClassName("button");
+
+    for (let index = 0; index < x.length; index++) {
+      const b = x[index];
+      b.classList.remove("selected");
+    }
+
+    document.getElementById("2019").classList.add("selected");
+
     deck.setProps({
       layers: [
         new HexagonLayer({
