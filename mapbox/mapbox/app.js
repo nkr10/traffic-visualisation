@@ -4,6 +4,7 @@ import {ScatterplotLayer} from '@deck.gl/layers';
 import {HexagonLayer} from '@deck.gl/aggregation-layers';
 import {AmbientLight, PointLight, LightingEffect} from '@deck.gl/core';
 import {MapboxLayer} from '@deck.gl/mapbox';
+import {HeatmapLayer} from '@deck.gl/aggregation-layers';
 
 //mapboxgl.accessToken = 'pk.eyJ1IjoiZWpsMjQiLCJhIjoiY2twam15eTIyMDRnMjJ2cGJpcDMydW5maCJ9.IO0Yzvqazsbc86dlBv4B4g';
 mapboxgl.accessToken = 'pk.eyJ1IjoibmtyMTAiLCJhIjoiY2tvdHFzcGtqMDVlNzJwcGl5dGxud241cyJ9.4Js3QvmYAkJyvsoGZCUP8A';
@@ -83,6 +84,14 @@ var deck = new Deck({
       coverage: 1,
     }),
 
+    new HeatmapLayer({
+      id: 'heat',
+      data: data,
+      getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+      getWeight: d => parseInt(d.AADT2019),
+      radiusPixels: 50,
+  }),
+
     new ScatterplotLayer({
       id: 'scatter',
       data: data,
@@ -115,7 +124,7 @@ var deck = new Deck({
   ]
 });
 
-map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+//map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 //map.addControl(new mapboxgl.NavigationControl());
 //map.dragPan.enable();
 //map.dragRotate.enable();
