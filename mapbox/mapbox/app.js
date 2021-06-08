@@ -67,16 +67,6 @@ var deck = new Deck({
       pitch: viewState.pitch
     });
   },
-  //getTooltip: ({object}) => object && {
-      
-      //html: `<p> <b>Year:</b> 2019 <br> <b>Location:</b> ${parseFloat(object.AADT2019)}`,
-
-    //html: `<h2>${object.AADT2019}</h2><div>${object.AADT2019}</div>`,
-      //style: {
-      //backgroundColor: '#ffffff',
-      //fontSize: '0.8em'
-    //}
- // },
 
   layers: [
     new HexagonLayer({
@@ -91,34 +81,45 @@ var deck = new Deck({
       opacity: 0.8,
       radius: 1000,
       coverage: 1,
-      controller: true,
-      onHover: ({object, x, y}) => {
-        //console.log("testing:" + object.Description, object.AADT2019, object.AADT2018);
-        const el = document.getElementById('tooltip');
-        if (object) {
-           
-        }
-    }
-      //getTooltip: ({object}) => object && {
-        //const el = document.getElementById('tooltip');
-        //if (object) {
-          //const { Description, AADT2014, AADT2015, AADT2016 } = object;
-
-        //var prevPerc = ((object.AADT2014 - object.AADT2015) / object.AADT2015 * 100).toFixed(2); //previous AADT
-        //var follPerc = ((object.AADT2016 - object.AADT2015) / object.AADT2015 * 100).toFixed(2); //following AADT
+      controller: true
         
-        /*html: `<p> <b>Year:</b> 2015 <br> <b>Location:</b> ${object.Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(object.AADT2015)} 
-          <br> <br> <b>Previous AADT: </b> ${numberWithCommas(objectAADT2014)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(object.AADT2016)} (${(follPerc<0?"":"+") + follPerc}%) </p>`
-        style: {
-          display: 'block';
-          opacity: '0.9';
-        }*/
-      //}
-    })
+    }),
+
+    new ScatterplotLayer({
+      id: 'scatter',
+      data: data,
+      opacity: 0.8,
+      filled: true,
+      radiusMinPixels: 5,
+      radiusMaxPixels: 5,
+      getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+      getFillColor: [151, 230, 165],
+      pickable: true,
+  
+      onHover: ({object, x, y}) => {
+          const el = document.getElementById('tooltip');
+          if (object) {
+              const { Description, AADT2018, AADT2019 } = object;
+  
+              var prevPerc = ((AADT2018 - AADT2019) / AADT2019 * 100).toFixed(2); //previous AADT
+  
+              el.innerHTML = `<p> <b>Year:</b> 2019 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2019)} 
+              <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2018)} (${(prevPerc<0?"":"+") + prevPerc}%) </p>`;
+              el.style.display = 'block';
+              el.style.opacity = 0.9;
+              el.style.left = x + 'px';
+              el.style.top = y + 'px';
+          } else {
+              el.style.opacity = 0.0;
+          }
+      }
+  
+  
+  })
   ]
 });
 
-map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 //map.addControl(new mapboxgl.NavigationControl());
 //map.dragPan.enable();
 //map.dragRotate.enable();
@@ -126,7 +127,7 @@ map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
 
 map.on('load', () => {
   map.addLayer(new MapboxLayer({id:'3d-heatmap', deck}));
-  
+
   var button2012 = document.getElementById("2012").addEventListener("click", () => {
     deck.setProps({
       layers: [
@@ -149,9 +150,58 @@ map.on('load', () => {
           data: data,
           opacity: 0.8,
           filled: true,
-          //filled: false,
-          //radiusMinPixels: 5,
-          //radiusMaxPixels: 5,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2012,  AADT2013} = object;
+                
+                var follPerc = (((AADT2013 - AADT2012) / AADT2012) * 100).toFixed(2); //following AADT
+                
+                el.innerHTML = `<p> <b>Year:</b> 2012 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${(AADT2012)} 
+                <br> <br> <b>Following AADT: </b> ${(parseInt(AADT2013))} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+        }
+
+      })
+
+      ]
+    });
+  })
+
+  var button2013 = document.getElementById("2013").addEventListener("click", () => {
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2013', 
+          colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2013/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
           radiusMinPixels: 5,
           radiusMaxPixels: 5,
           getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
@@ -176,31 +226,10 @@ map.on('load', () => {
                   el.style.opacity = 0.0;
               }
           }
-      }),
+      })
 
-
-
-      ],
-    });
-  })
-
-  var button2013 = document.getElementById("2013").addEventListener("click", () => {
-    deck.setProps({
-      layers: [
-        new HexagonLayer({
-          id: '3d-heatmap2013', 
-          colorRange, 
-          data: data,
-          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
-          getElevationWeight: d => Math.ceil(d.AADT2013/100),
-          elevationScale: 250,
-          extruded: true,
-          pickable: true,
-          opacity: 0.8,
-          radius: 1000,
-          coverage: 1,
-        })
-      ],
+      ]
+      ,
     });
   })
 
@@ -219,7 +248,40 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+      
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+      
+              if (object) {
+                  const { Description, AADT2013, AADT2014, AADT2015 } = object;
+      
+                  var prevPerc = ((AADT2013 - AADT2014) / AADT2014 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2015 - AADT2014) / AADT2014 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2014 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2014)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2013)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2015)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      })
+
       ],
     });
   })
@@ -239,7 +301,39 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+      
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2014, AADT2015, AADT2016 } = object;
+      
+                  var prevPerc = ((AADT2014 - AADT2015) / AADT2015 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2016 - AADT2015) / AADT2015 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2015 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2015)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2014)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2016)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      })
+        
       ],
     });
   })
@@ -259,7 +353,42 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+      
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2015, AADT2016, AADT2017} = object;
+                  console.log("test");
+                  console.log("2012:" + AADT2015);
+                  console.log(AADT2016);
+      
+                  var prevPerc = ((AADT2015 - AADT2016) / AADT2016 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2017 - AADT2016) / AADT2016 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2016 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2016)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2015)}  (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2017)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      })
+
       ],
     });
   })
@@ -279,7 +408,38 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+      
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2016, AADT2017, AADT2018 } = object;
+      
+                  var prevPerc = ((AADT2016 - AADT2017) / AADT2017 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2018 - AADT2017) / AADT2017 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2017 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2017)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2016)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2018)} (${(follPerc<0?"":"+") + follPerc}%)</p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      })
       ],
     });
   })
@@ -299,7 +459,37 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: d => [151, 230, 165],
+          pickable: true,
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2017, AADT2018, AADT2019 } = object;
+      
+                  var prevPerc = ((AADT2017 - AADT2018) / AADT2018 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2019 - AADT2018) / AADT2018 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2018 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2018)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2017)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2019)} (${(follPerc<0?"":"+") + follPerc}%)</p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      })
       ],
     });
   })
@@ -319,7 +509,39 @@ map.on('load', () => {
           opacity: 0.8,
           radius: 1000,
           coverage: 1,
-        })
+        }),
+
+        new ScatterplotLayer({
+          id: 'scatter',
+          data: data,
+          opacity: 0.8,
+          filled: true,
+          radiusMinPixels: 5,
+          radiusMaxPixels: 5,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+      
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2018, AADT2019 } = object;
+      
+                  var prevPerc = ((AADT2018 - AADT2019) / AADT2019 * 100).toFixed(2); //previous AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2019 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2019)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2018)} (${(prevPerc<0?"":"+") + prevPerc}%) </p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+      
+      
+      })
       ],
     });
   })
