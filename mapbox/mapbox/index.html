@@ -85,6 +85,20 @@
       margin: 10px 30px;
     }
 
+    #control-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 12px;
+      padding: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+      z-index: 1;
+      background: #fff;
+      font-family: Helvetica, Arial, sans-serif;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+    }
+
     </style>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.4.0/mapbox-gl.css' rel='stylesheet' />
   </head>
@@ -110,8 +124,50 @@
         <div><span style="background-color: #fd8d3c"></span>60,000 - 79,999</div>
         <div><span style="background-color: #feb24c"></span>40,000 - 59,999</div>
         <div><span style="background-color: #fed976"></span>20,000 - 39,999</div>
-        <div><span style="background-color: #ffffb2"></span>0 - 19,999</div>
+        <div><span style="background-color: #D5E089"></span>0 - 19,999</div>
+      </div>
+
+      <div id="control-panel">
+        <div>
+          <h2>Traffic Data</h2>
         </div>
+        
+        <div id="radios">
+          <h3>View By:</h3>
+          
+          <input type="radio" id="total" name="radio" value="total" checked='checked'></input>
+          <span id="total" for="total"></span>
+          <label>All Traffic</label>
+        
+          <input type="radio" id="vehicles" name="radio" value="vehicles"></input>
+          <span id="vehicles" for="vehicles"></span>
+          <label>Vehicle Type</label>
+
+          <br>
+          
+          <input type="radio" id="light" name="radio" value="light"></input>
+          <span id="light" for="light"></span>
+          <label>Light Vehicles</label>
+
+          <input type="radio" id="heavy" name="radio" value="heavy"></input>
+          <span id="heavy" for="heavy"></span>
+          <label>Heavy Vehicles</label>
+
+          <br><hr>
+
+          <input type="radio" id="heatmap" name="radio" value="heatmap"></input>
+          <label>Heat Map</label>
+
+        </div>
+
+        <!-- <div id="checkbox">
+          <input type="checkbox" id="light" checked>
+          <label for="light">Light Vehicles</label>
+
+          <input type="checkbox" id="heavy" checked>
+          <label>Heavy Vehicles</label>
+        </div> -->
+      </div>
 
       <div id="tooltip"></div>
       </div>
