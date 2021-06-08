@@ -70,7 +70,7 @@ var deck = new Deck({
 
   layers: [
     new HexagonLayer({
-      id: '3d-heatmap', 
+      id: '3d-heatmap2019', 
       colorRange, 
       data: data,
       getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
@@ -81,8 +81,6 @@ var deck = new Deck({
       opacity: 0.8,
       radius: 1000,
       coverage: 1,
-      controller: true
-        
     }),
 
     new ScatterplotLayer({
@@ -113,8 +111,6 @@ var deck = new Deck({
               el.style.opacity = 0.0;
           }
       }
-  
-  
   })
   ]
 });
