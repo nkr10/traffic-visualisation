@@ -6,10 +6,9 @@ import {AmbientLight, PointLight, LightingEffect} from '@deck.gl/core';
 import {MapboxLayer} from '@deck.gl/mapbox';
 import {HeatmapLayer} from '@deck.gl/aggregation-layers';
 
-//mapboxgl.accessToken = 'pk.eyJ1IjoiZWpsMjQiLCJhIjoiY2twam15eTIyMDRnMjJ2cGJpcDMydW5maCJ9.IO0Yzvqazsbc86dlBv4B4g';
+// API key
 mapboxgl.accessToken = 'pk.eyJ1IjoibmtyMTAiLCJhIjoiY2tvdHFzcGtqMDVlNzJwcGl5dGxud241cyJ9.4Js3QvmYAkJyvsoGZCUP8A';
 
-// source: Natural Earth http://www.naturalearthdata.com/ via geojson.xyz
 //const data = '2012-2019.json';
 const data = 'traffic.json';
 
@@ -54,6 +53,7 @@ const colorRangeHeavy = [
 //const MAP_STYLE = 'mapbox://styles/mapbox/light-v9';
 const MAP_STYLE = 'mapbox://styles/nkr10/ckpn8p2l608tl17ogxyzgclv4';
 
+// initial view properties
 const map = new mapboxgl.Map({
   container: 'map',
   style: MAP_STYLE,
@@ -65,6 +65,7 @@ const map = new mapboxgl.Map({
   pitch: INITIAL_VIEW_STATE.pitch
 });
 
+//initial view of the map - the initial view shows the 2012 traffic data
 var deck = new Deck({
   canvas: 'deck-canvas',
   initialViewState: INITIAL_VIEW_STATE,
@@ -143,6 +144,7 @@ map.on('load', () => {
   var heavy = document.getElementById('heavy');
   var heat = document.getElementById('heatmap')
 
+
   var button2012 = document.getElementById("2012").addEventListener("click", () => {
     var x = document.getElementsByClassName("button");
     for (let index = 0; index < x.length; index++) {
@@ -152,6 +154,57 @@ map.on('load', () => {
 
     document.getElementById("2012").classList.add("selected");
 
+    // automatically select 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2012', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2012/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2012',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2012,  AADT2013} = object;
+                
+                var follPerc = (((AADT2013 - AADT2012) / AADT2012) * 100).toFixed(2); //following AADT
+                
+                el.innerHTML = `<p> <b>Year:</b> 2012 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${(AADT2012)} 
+                <br> <br> <b>Following AADT: </b> ${(parseInt(AADT2013))} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+
+    // when 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -204,6 +257,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -273,6 +327,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -327,6 +382,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -381,6 +437,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -437,6 +494,59 @@ map.on('load', () => {
 
     document.getElementById("2013").classList.add("selected");
 
+    // automatically select 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2013', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2013/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2013',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+    
+            if (object) {
+              const { Description, AADT2013, AADT2014, AADT2015 } = object;
+  
+              var prevPerc = ((AADT2013 - AADT2014) / AADT2014 * 100).toFixed(2); //previous AADT
+              var follPerc = ((AADT2015 - AADT2014) / AADT2014 * 100).toFixed(2); //following AADT
+  
+              el.innerHTML = `<p> <b>Year:</b> 2014 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2014)} 
+              <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2013)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2015)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+              el.style.display = 'block';
+              el.style.opacity = 0.9;
+              el.style.left = x + 'px';
+              el.style.top = y + 'px';
+            } else {
+              el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+
+    // when 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -491,6 +601,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -562,6 +673,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -618,6 +730,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -674,6 +787,7 @@ map.on('load', () => {
       }
     })
 
+    // // when 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -732,6 +846,59 @@ map.on('load', () => {
 
     document.getElementById("2014").classList.add("selected");
 
+    // automatically select 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2014', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2014/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2014',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+          const el = document.getElementById('tooltip');
+  
+          if (object) {
+              const { Description, AADT2013, AADT2014, AADT2015 } = object;
+  
+              var prevPerc = ((AADT2013 - AADT2014) / AADT2014 * 100).toFixed(2); //previous AADT
+              var follPerc = ((AADT2015 - AADT2014) / AADT2014 * 100).toFixed(2); //following AADT
+  
+              el.innerHTML = `<p> <b>Year:</b> 2014 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2014)} 
+              <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2013)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2015)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+              el.style.display = 'block';
+              el.style.opacity = 0.9;
+              el.style.left = x + 'px';
+              el.style.top = y + 'px';
+          } else {
+              el.style.opacity = 0.0;
+          }
+      }
+        })
+      ]
+    });
+
+    // when 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -786,6 +953,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -857,6 +1025,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -913,6 +1082,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -969,6 +1139,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -1027,6 +1198,58 @@ map.on('load', () => {
 
     document.getElementById("2015").classList.add("selected");
 
+    // automatically select 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2015', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2015/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2015',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2014, AADT2015, AADT2016 } = object;
+    
+                var prevPerc = ((AADT2014 - AADT2015) / AADT2015 * 100).toFixed(2); //previous AADT
+                var follPerc = ((AADT2016 - AADT2015) / AADT2015 * 100).toFixed(2); //following AADT
+    
+                el.innerHTML = `<p> <b>Year:</b> 2015 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2015)} 
+                <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2014)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2016)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+
+    // when 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -1080,6 +1303,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -1150,6 +1374,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -1205,6 +1430,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -1260,6 +1486,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -1317,6 +1544,61 @@ map.on('load', () => {
 
     document.getElementById("2016").classList.add("selected");
 
+    // automatically select 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2016', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2016/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2016',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+              const el = document.getElementById('tooltip');
+              if (object) {
+                  const { Description, AADT2015, AADT2016, AADT2017} = object;
+                  console.log("test");
+                  console.log("2012:" + AADT2015);
+                  console.log(AADT2016);
+      
+                  var prevPerc = ((AADT2015 - AADT2016) / AADT2016 * 100).toFixed(2); //previous AADT
+                  var follPerc = ((AADT2017 - AADT2016) / AADT2016 * 100).toFixed(2); //following AADT
+      
+                  el.innerHTML = `<p> <b>Year:</b> 2016 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2016)} 
+                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2015)}  (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2017)} (${(follPerc<0?"":"+") + follPerc}%) </p>`;
+                  el.style.display = 'block';
+                  el.style.opacity = 0.9;
+                  el.style.left = x + 'px';
+                  el.style.top = y + 'px';
+              } else {
+                  el.style.opacity = 0.0;
+              }
+          }
+        })
+      ]
+    });
+
+    // when 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -1373,6 +1655,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -1446,6 +1729,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -1504,6 +1788,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -1562,6 +1847,7 @@ map.on('load', () => {
       }
     })
 
+    // when 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -1622,6 +1908,57 @@ map.on('load', () => {
 
     document.getElementById("2017").classList.add("selected");
 
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2017', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2017/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2017',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2016, AADT2017, AADT2018 } = object;
+    
+                var prevPerc = ((AADT2016 - AADT2017) / AADT2017 * 100).toFixed(2); //previous AADT
+                var follPerc = ((AADT2018 - AADT2017) / AADT2017 * 100).toFixed(2); //following AADT
+    
+                el.innerHTML = `<p> <b>Year:</b> 2017 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2017)} 
+                <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2016)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2018)} (${(follPerc<0?"":"+") + follPerc}%)</p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+ 
+    // if 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -1675,6 +2012,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -1745,6 +2083,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -1800,6 +2139,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -1855,6 +2195,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -1912,6 +2253,58 @@ map.on('load', () => {
 
     document.getElementById("2018").classList.add("selected");
 
+    // automatically selects 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2018', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2018/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2018',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2017, AADT2018, AADT2019 } = object;
+    
+                var prevPerc = ((AADT2017 - AADT2018) / AADT2018 * 100).toFixed(2); //previous AADT
+                var follPerc = ((AADT2019 - AADT2018) / AADT2018 * 100).toFixed(2); //following AADT
+    
+                el.innerHTML = `<p> <b>Year:</b> 2018 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2018)} 
+                <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2017)} (${(prevPerc<0?"":"+") + prevPerc}%) <br> <b>Following AADT:</b> ${numberWithCommas(AADT2019)} (${(follPerc<0?"":"+") + follPerc}%)</p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+
+    // if 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -1965,6 +2358,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -2035,6 +2429,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'light' radio button is clicked 
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -2090,6 +2485,7 @@ map.on('load', () => {
       }
     })
 
+    //if 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -2145,6 +2541,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -2202,6 +2599,57 @@ map.on('load', () => {
 
     document.getElementById("2019").classList.add("selected");
 
+    // automatically selects 'all traffic' and display
+    allTraffic.checked = true;
+    deck.setProps({
+      layers: [
+        new HexagonLayer({
+          id: '3d-heatmap2019', 
+          colorRange: colorRange, 
+          data: data,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getElevationWeight: d => Math.ceil(d.AADT2019/100),
+          elevationScale: 250,
+          extruded: true,
+          pickable: true,
+          opacity: 0.8,
+          radius: 1000,
+          coverage: 1,
+        }), 
+
+        new ScatterplotLayer({
+          id: 'scatter2019',
+          data: data,
+          opacity: 0.5,
+          filled: true,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 4,
+          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
+          getFillColor: [151, 230, 165],
+          pickable: true,
+
+          onHover: ({object, x, y}) => {
+            const el = document.getElementById('tooltip');
+            if (object) {
+                const { Description, AADT2018, AADT2019 } = object;
+    
+                var prevPerc = ((AADT2018 - AADT2019) / AADT2019 * 100).toFixed(2); //previous AADT
+    
+                el.innerHTML = `<p> <b>Year:</b> 2019 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2019)} 
+                <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2018)} (${(prevPerc<0?"":"+") + prevPerc}%) </p>`;
+                el.style.display = 'block';
+                el.style.opacity = 0.9;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+            } else {
+                el.style.opacity = 0.0;
+            }
+          }
+        })
+      ]
+    });
+
+    // if 'all traffic' radio button is clicked
     allTraffic.addEventListener("click", () => {
       if(allTraffic.checked == true) {
         deck.setProps({
@@ -2254,6 +2702,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'vehicles' radio button is clicked
     vehicles.addEventListener("click", () => {
       if(vehicles.checked == true) {
         deck.setProps({
@@ -2323,6 +2772,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'light' radio button is clicked
     light.addEventListener("click", () => {
       if(light.checked == true) {
         deck.setProps({
@@ -2377,6 +2827,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'heavy' radio button is clicked
     heavy.addEventListener("click", () => {
       if(heavy.checked == true) {
         deck.setProps({
@@ -2431,6 +2882,7 @@ map.on('load', () => {
       }
     })
 
+    // if 'heat' radio button is clicked
     heat.addEventListener("click", () => {
       if(heat.checked == true) {
         deck.setProps({
@@ -2476,65 +2928,6 @@ map.on('load', () => {
         })
       }
     })
-  })
-
-  var button2019 = document.getElementById("2019").addEventListener("click", () => {
-    var x = document.getElementsByClassName("button");
-
-    for (let index = 0; index < x.length; index++) {
-      const b = x[index];
-      b.classList.remove("selected");
-    }
-
-    document.getElementById("2019").classList.add("selected");
-
-    deck.setProps({
-      layers: [
-        new HexagonLayer({
-          id: '3d-heatmap2019', 
-          colorRange, 
-          data: data,
-          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
-          getElevationWeight: d => Math.ceil(d.AADT2019/100),
-          elevationScale: 250,
-          extruded: true,
-          pickable: true,
-          opacity: 0.8,
-          radius: 1000,
-          coverage: 1,
-        }),
-
-        new ScatterplotLayer({
-          id: 'scatter',
-          data: data,
-          opacity: 0.8,
-          filled: true,
-          radiusMinPixels: 5,
-          radiusMaxPixels: 5,
-          getPosition: d => [parseFloat(d.Longitude), parseFloat(d.Latitude)],
-          getFillColor: [151, 230, 165],
-          pickable: true,
-      
-          onHover: ({object, x, y}) => {
-              const el = document.getElementById('tooltip');
-              if (object) {
-                  const { Description, AADT2018, AADT2019 } = object;
-      
-                  var prevPerc = ((AADT2018 - AADT2019) / AADT2019 * 100).toFixed(2); //previous AADT
-      
-                  el.innerHTML = `<p> <b>Year:</b> 2019 <br> <b>Location:</b> ${Description} <br> <b>Annual avg daily traffic (AADT): </b> ${numberWithCommas(AADT2019)} 
-                  <br> <br> <b>Previous AADT: </b> ${numberWithCommas(AADT2018)} (${(prevPerc<0?"":"+") + prevPerc}%) </p>`;
-                  el.style.display = 'block';
-                  el.style.opacity = 0.9;
-                  el.style.left = x + 'px';
-                  el.style.top = y + 'px';
-              } else {
-                  el.style.opacity = 0.0;
-              }
-          }
-      })
-      ],
-    });
   })
 })
 
