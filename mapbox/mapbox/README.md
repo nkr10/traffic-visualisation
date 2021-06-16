@@ -12,15 +12,18 @@ with [webpack-dev-server](https://webpack.js.org/guides/development/#webpack-dev
 To install dependencies:
 
 ```bash
+Download Node.js from https://nodejs.org/en/download/ 
+# and 
+Install npm 
+   run command on the command line:  `npm install -g npm`
+# and
+Install deck.gl
+   run command on the command line: `npm install deck.gl`
+# then within the folder
 npm install
 # or
 yarn
 ```
 
-Commands:
+To run:
 * `npm start` is the development target, to serve the app and hot reload.
-* `npm run build` is the production target, to create the final bundle and write to disk.
-
-### Basemap
-
-The basemap in this example is provided by [CARTO free basemap service](https://carto.com/basemaps). To use an alternative base map solution, visit [this guide](https://deck.gl/docs/get-started/using-with-map#using-other-basemap-services)
